@@ -1,25 +1,27 @@
-import React, { useRef, useState, useEffect } from 'react';
-import './Recorder.css';
-import { useDispatch, useSelector } from 'react-redux';
-import cx from 'classnames';
-import { start, stop, selectDateStart } from '../../redux/recorder';
-import { addZero } from '../../lib/utils';
+import React, { useRef, useState, useEffect } from "react";
+import "./Recorder.css";
+import { useDispatch, useSelector } from "react-redux";
+import cx from "classnames";
+import { start, stop, selectDateStart } from "../../redux/recorder";
+import { createUserEvent } from "../../redux/user-events";
+import { addZero } from "../../lib/utils";
 
 const Recorder = () => {
   const dispatch = useDispatch();
   const dateStart = useSelector(selectDateStart);
-  const started = dateStart !== '';
+  const started = dateStart !== "";
   let interval = useRef<number>(0);
   const [, setCount] = useState<number>(0);
 
   const handleClick = () => {
     if (started) {
       window.clearInterval(interval.current);
+      dispatch(createUserEvent());
       dispatch(stop());
     } else {
       dispatch(start());
       interval.current = window.setInterval(() => {
-        setCount(count => count + 1);
+        setCount((count) => count + 1);
       }, 1000);
     }
   };
@@ -39,7 +41,7 @@ const Recorder = () => {
   seconds -= minutes * 60;
 
   return (
-    <div className={cx('recorder', { 'recorder-started': started })}>
+    <div className={cx("recorder", { "recorder-started": started })}>
       <button onClick={handleClick} className="recorder-record">
         <span></span>
       </button>
